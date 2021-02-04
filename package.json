@@ -1,0 +1,19 @@
+{
+  "name": "ao3-api",
+  "version": "1.0.0",
+  "description": "An unofficial API for getting information from the Archive of Our Own.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "API"
+  ],
+  "author": "Dr. Off",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^4.1.0",
+    "koa": "^2.13.1",
+    "koa-router": "^10.0.0"
+  }
+}
