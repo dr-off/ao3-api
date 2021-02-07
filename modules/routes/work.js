@@ -175,9 +175,11 @@ async function route(context)
 		{
 			let chapters = $("dd.chapters", "dd.stats").text().trim().split("/");
 			
-			response.work.stats.published_chapters = util.cleanAndParseInt(chapters[0]);
-
-			response.work.stats.total_chapters = chapters[1] != "?" ? util.cleanAndParseInt(chapters[1]) : -1;
+			response.work.stats.chapters =
+			{
+				published: util.cleanAndParseInt(chapters[0]),
+				total: chapters[1] != "?" ? util.cleanAndParseInt(chapters[1]) : -1,
+			}
 		}
 
 	
@@ -186,8 +188,6 @@ async function route(context)
 		response.work.stats.kudos = util.cleanAndParseInt($("dd.kudos", "dd.stats").text());
 	
 		response.work.stats.bookmarks = util.cleanAndParseInt($("dd.bookmarks", "dd.stats").text());
-
-		// TODO: Bookmarks
 	
 		response.work.stats.hits = util.cleanAndParseInt($("dd.hits", "dd.stats").text());
 	}
