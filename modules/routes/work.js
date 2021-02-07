@@ -18,6 +18,26 @@ const ratings =
 	"Explicit": 4,
 }
 
+const archiveWarnings =
+{
+	"Creator Chose Not To Use Archive Warnings": 0,
+	"Graphic Depictions Of Violence": 1,
+	"Major Character Death": 2,
+	"No Archive Warnings Apply": 3,
+	"Rape/Non-Con": 4,
+	"Underage": 5,
+}
+
+const categories =
+{
+	"F/F": 0,
+	"F/M": 1,
+	"Gen": 2,
+	"M/M": 3,
+	"Multi": 4,
+	"Other": 5,
+}
+
 const getString = bent("https://archiveofourown.org/works/", "string", 200, { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.146 Safari/537.36" });
 
 //
@@ -62,63 +82,135 @@ async function route(context)
 	// Work Information Block
 	//
 
-	let ratingText = $("dd.rating.tags").text().trim()
-	response.work.rating =
+	// Rating
 	{
-		index: ratings[ratingText],
-		text: ratingText,
+		response.work.rating = undefined;
+
+		let element = $("dd.rating.tags > ul > li").first();
+		let text = element.text();
+
+		response.work.rating =
+		{
+			index: ratings[text],
+			title: text,
+			url: element.children("a").prop("href"),
+		}
+
 	}
 
-	// TODO: Archive Warnings
-
-	// TODO: Categories
-
-	response.work.fandoms = [];
-	$("dd.fandom.tags > ul > li").each(function(i, element)
+	// Archive Warnings
 	{
-		let fandom = {};
-
-		fandom.name = $(this).text();
-		fandom.url = $(this).children("a").prop("href");
-
-		response.work.fandoms.push(fandom);
-	});
-
-	// TODO: Relationships
-
-	// TODO: Characters
-
-	// TODO: Additional Tags
+		response.work.archiveWarnings = [];
 	
-	response.work.language = $("dd.language").text().trim();
+		$("dd.warning.tags > ul > li").each(function(i, element)
+		{
+			let text = $(this).text();
+	
+			let warning = 
+			{
+				index: archiveWarnings[text],
+				name: text,
+				url: $(this).children("a").prop("href"),
+			};
+	
+			response.work.archiveWarnings.push(warning);
+		});
+	}
 
-	// TODO: Series
+	// Categories
+	{
+		// TODO
+	}
 
-	response.work.stats = {};
+	// Fandoms
+	{
+		response.work.fandoms = [];
+	
+		$("dd.fandom.tags > ul > li").each(function(i, element)
+		{
+			let text = $(this).text();
+	
+			let fandom = 
+			{
+				name: text,
+				url: $(this).children("a").prop("href"),
+			};
+	
+			response.work.fandoms.push(fandom);
+		});
+	}
 
-	// TODO: Stats > Publication Date (how should I format this?)
+	// Relationships
+	{
+		// TODO
+	}
 
-	response.work.stats.words = parseInt($("dd.words", "dd.stats").text().trim().replace(",", ""));
+	// Characters
+	{
+		// TODO
+	}
 
-	// TODO: Stats > Chapters
+	// Additional Tags
+	{
+		// TODO
+	}
+	
+	// Language
+	{
+		response.work.language = $("dd.language").text().trim();
+	}
 
-	// TODO: Stats > Comments
+	// Series (if the work is apart of one)
+	{
+		// TODO
+	}
 
-	response.work.stats.kudos = parseInt($("dd.kudos", "dd.stats").text().trim().replace(",", ""));
+	// Stats
+	{
+		response.work.stats = {};
+	
+		// TODO: Publication Date (how should I format this?)
 
-	// TODO: Stats > Bookmarks
+		// TODO: Last Update Date (for work-in-progress multi-chapter works)
 
-	response.work.stats.hits = parseInt($("dd.hits", "dd.stats").text().trim().replace(",", ""));
+		// TODO: Completion Date (for completed multi-chapter works)
+	
+		response.work.stats.words = parseInt($("dd.words", "dd.stats").text().trim().replace(",", ""));
+	
+		// TODO: Chapters
+	
+		// TODO: Comments
+	
+		response.work.stats.kudos = parseInt($("dd.kudos", "dd.stats").text().trim().replace(",", ""));
+	
+		// TODO: Bookmarks
+	
+		response.work.stats.hits = parseInt($("dd.hits", "dd.stats").text().trim().replace(",", ""));
+	}
 
 	//
 	// Work Metadata
 	//
 
-	response.work.title = $(".title.heading", "#workskin").text().trim();
+	// Title
+	{
+		response.work.title = $(".title.heading", "#workskin").text().trim();
+	}
 
+	// Authors
+	{
+		response.work.authors = [];
 
-
-	// TODO: Authors
+		$("#workskin > .preface.group > h3.byline.heading > a").each(function(i, element)
+		{
+			let author = {};
+	
+			author.name = $(this).text();
+			author.url = $(this).prop("href");
+	
+			response.work.authors.push(author);
+		});
+	}
 
 	//
 	// Chapter Information (for multi-chapter works)
