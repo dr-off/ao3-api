@@ -4,7 +4,7 @@
 
 const util = {};
 
-util.cleanAndParseInt(text)
+util.cleanAndParseInt = function(text)
 {
 	return parseInt(text.trim().replace(",", ""));
 }
