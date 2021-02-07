@@ -24,11 +24,16 @@ async function route(context)
 	let work_id = context.params.work_id;
 	let chapter_id = context.params.chapter_id;
 
-	let html;
+	let requestUrl = "";
+
+	requestUrl += work_id;
+
 	if(chapter_id)
-		html = await getString(work_id + "/chapters/" + chapter_id);
-	else
-		html = await getString(work_id);
+		requestUrl += "/chapters/" + chapter_id;
+	else if(context.request.query.view_full_work)
+		requestUrl += "?view_full_work=true";
+
+	let html = await getString(requestUrl);
 
 	let $ = cheerio.load(html);
 
@@ -94,7 +99,21 @@ async function route(context)
 
 	// Categories
 	{
-		// TODO
+		response.work.categories = [];
+
+		$("dd.category.tags > ul > li").each(function(i, element)
+		{
+			let text = $(this).text();
+
+			let category =
+			{
+				index: categories[text],
+				name: text,
+				url: $(this).children("a").prop("href"),
+			}
+
+			response.work.categories.push(category);
+		});
 	}
 
 	// Fandoms
@@ -150,17 +169,27 @@ async function route(context)
 
 		// TODO: Completion Date (for completed multi-chapter works)
 	
-		response.work.stats.words = parseInt($("dd.words", "dd.stats").text().trim().replace(",", ""));
+		response.work.stats.words = util.cleanAndParseInt($("dd.words", "dd.stats").text());
 	
-		// TODO: Chapters
+		// Chapters
+		{
+			let chapters = $("dd.chapters", "dd.stats").text().trim().split("/");
+			
+			response.work.stats.published_chapters = util.cleanAndParseInt(chapters[0]);
+
+			response.work.stats.total_chapters = chapters[1] != "?" ? util.cleanAndParseInt(chapters[1]) : -1;
+		}
+
 	
 		// TODO: Comments
 	
-		response.work.stats.kudos = parseInt($("dd.kudos", "dd.stats").text().trim().replace(",", ""));
+		response.work.stats.kudos = util.cleanAndParseInt($("dd.kudos", "dd.stats").text());
 	
+		response.work.stats.bookmarks = util.cleanAndParseInt($("dd.bookmarks", "dd.stats").text());
+
 		// TODO: Bookmarks
 	
-		response.work.stats.hits = parseInt($("dd.hits", "dd.stats").text().trim().replace(",", ""));
+		response.work.stats.hits = util.cleanAndParseInt($("dd.hits", "dd.stats").text());
 	}
 
 	//
@@ -188,18 +217,35 @@ async function route(context)
 	}
 
 	//
-	// Chapter Information (for multi-chapter works)
+	// Chapter(s) Information
 	//
 
-	if(chapter_id)
+	if(response.work.stats.total_chapters != 1)
 	{
-		response.chapter = {};
+		response.chapters = [];
 
-		response.chapter.id = parseInt(chapter_id);
+		$("#chapters").children().each(function(i, element)
+		{
+			let titleElement = $(this).find("h3.title");
 
-		// TODO: Chapter Title
+			let chapterUrl = titleElement.children("a").prop("href");
 
-		response.chapter.url = response.work.url + "/chapters/" + chapter_id;
+			let chapterId = parseInt(chapterUrl.split("/")[4]);
+			
+			let chapterNumber = parseInt(titleElement.children("a").text().substr(8));
+
+			let chapterTitle = titleElement.contents().filter((i, element) => element.type == "text").text().trim().substr(2); // Partially taken from https://stackoverflow.com/a/23956052
+
+			let chapter = 
+			{
+				id: chapterId,
+				number: chapterNumber, 
+				title: chapterTitle,
+				url: chapterUrl,
+			};
+
+			response.chapters.push(chapter);
+		});
 	}
 
 	context.type = "application/json";
