@@ -39,15 +39,28 @@ async function route(context)
 
 	let response = {};
 
-	response.api_version = [1, 0];
+	//
+	// API Information
+	//
+
+	response.api =
+	{
+		version: "1.0",
+	};
 
 	response.work = {};
 	
+	//
+	// Work Identifiers
+	//
+	
 	response.work.id = parseInt(work_id);
 
-	response.work.title = $(".title.heading", "#workskin").text().trim();
+	response.work.url = "/works/" + work_id;
 
-	// TODO: Authors
+	//
+	// Work Information Block
+	//
 
 	let ratingText = $("dd.rating.tags").text().trim()
 	response.work.rating =
@@ -60,7 +73,16 @@ async function route(context)
 
 	// TODO: Categories
 
-	// TODO: Fandoms
+	response.work.fandoms = [];
+	$("dd.fandom.tags > ul > li").each(function(i, element)
+	{
+		let fandom = {};
+
+		fandom.name = $(this).text();
+		fandom.url = $(this).children("a").prop("href");
+
+		response.work.fandoms.push(fandom);
+	});
 
 	// TODO: Relationships
 
@@ -88,13 +110,29 @@ async function route(context)
 
 	response.work.stats.hits = parseInt($("dd.hits", "dd.stats").text().trim().replace(",", ""));
 
+	//
+	// Work Metadata
+	//
+
+	response.work.title = $(".title.heading", "#workskin").text().trim();
+
+
+
+	// TODO: Authors
+
+	//
+	// Chapter Information (for multi-chapter works)
+	//
+
 	if(chapter_id)
 	{
 		response.chapter = {};
 
 		response.chapter.id = parseInt(chapter_id);
 
+		// TODO: Chapter Title
 
+		response.chapter.url = response.work.url + "/chapters/" + chapter_id;
 	}
 
 	context.type = "application/json";
