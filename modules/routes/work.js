@@ -48,6 +48,10 @@ async function route(context)
 		version: "1.0",
 	};
 
+	//
+	// Work
+	//
+
 	response.work = {};
 	
 	//
@@ -75,78 +79,48 @@ async function route(context)
 			title: text,
 			url: element.children("a").prop("href"),
 		}
-
 	}
 
 	// Archive Warnings
 	{
 		response.work.archiveWarnings = [];
 	
-		$("dd.warning.tags > ul > li").each(function(i, element)
-		{
-			let text = $(this).text();
-	
-			let warning = 
-			{
-				index: archiveWarnings[text],
-				name: text,
-				url: $(this).children("a").prop("href"),
-			};
-	
-			response.work.archiveWarnings.push(warning);
-		});
+		util.populateArrayFromListElement($, response.work.archiveWarnings, "dd.warning.tags > ul > li", archiveWarnings);
 	}
 
 	// Categories
 	{
 		response.work.categories = [];
 
-		$("dd.category.tags > ul > li").each(function(i, element)
-		{
-			let text = $(this).text();
-
-			let category =
-			{
-				index: categories[text],
-				name: text,
-				url: $(this).children("a").prop("href"),
-			}
-
-			response.work.categories.push(category);
-		});
+		util.populateArrayFromListElement($, response.work.categories, "dd.category.tags > ul > li", categories);
 	}
 
 	// Fandoms
 	{
 		response.work.fandoms = [];
-	
-		$("dd.fandom.tags > ul > li").each(function(i, element)
-		{
-			let text = $(this).text();
-	
-			let fandom = 
-			{
-				name: text,
-				url: $(this).children("a").prop("href"),
-			};
-	
-			response.work.fandoms.push(fandom);
-		});
+
+		util.populateArrayFromListElement($, response.work.fandoms, "dd.fandom.tags > ul > li");
 	}
 
 	// Relationships
 	{
-		// TODO
+		response.work.relationships = [];
+
+		util.populateArrayFromListElement($, response.work.relationships, "dd.relationship.tags > ul > li");
 	}
 
 	// Characters
 	{
-		// TODO
+		response.work.characters = [];
+
+		util.populateArrayFromListElement($, response.work.characters, "dd.character.tags > ul > li");
 	}
 
 	// Additional Tags
 	{
-		// TODO
+		response.work.additionalTags = [];
+
+		util.populateArrayFromListElement($, response.work.additionalTags, "dd.freeform.tags > ul > li");
 	}
 	
 	// Language
@@ -163,27 +137,23 @@ async function route(context)
 	{
 		response.work.stats = {};
 	
-		// TODO: Publication Date (how should I format this?)
+		response.work.publication_date = $("dd.published", "dd.stats").text();
 
-		// TODO: Last Update Date (for work-in-progress multi-chapter works)
+		let statusElement = $("dd.status", "dd.stats");
 
-		// TODO: Completion Date (for completed multi-chapter works)
+		if(statusElement.length > 0)
+			response.work.update_date = statusElement.text();
 	
 		response.work.stats.words = util.cleanAndParseInt($("dd.words", "dd.stats").text());
 	
-		// Chapters
+		let chapters = $("dd.chapters", "dd.stats").text().trim().split("/");
+		response.work.stats.chapters =
 		{
-			let chapters = $("dd.chapters", "dd.stats").text().trim().split("/");
-			
-			response.work.stats.chapters =
-			{
-				published: util.cleanAndParseInt(chapters[0]),
-				total: chapters[1] != "?" ? util.cleanAndParseInt(chapters[1]) : -1,
-			}
+			published: util.cleanAndParseInt(chapters[0]),
+			total: chapters[1] != "?" ? util.cleanAndParseInt(chapters[1]) : -1,
 		}
-
 	
-		// TODO: Comments
+		response.work.stats.comments = util.cleanAndParseInt($("dd.comments", "dd.stats").text());
 	
 		response.work.stats.kudos = util.cleanAndParseInt($("dd.kudos", "dd.stats").text());
 	
@@ -220,7 +190,7 @@ async function route(context)
 	// Chapter(s) Information
 	//
 
-	if(response.work.stats.total_chapters != 1)
+	if(response.work.stats.chapters.total != 1)
 	{
 		response.chapters = [];
 
@@ -232,7 +202,7 @@ async function route(context)
 
 			let chapterId = parseInt(chapterUrl.split("/")[4]);
 			
-			let chapterNumber = parseInt(titleElement.children("a").text().substr(8));
+			let chapterNumber = parseInt(titleElement.children("a").text().split(" ")[1]);
 
 			let chapterTitle = titleElement.contents().filter((i, element) => element.type == "text").text().trim().substr(2); // Partially taken from https://stackoverflow.com/a/23956052
 
