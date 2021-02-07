@@ -5,38 +5,13 @@
 const bent = require("bent");
 const cheerio = require("cheerio");
 
+const { ratings, archiveWarnings, categories } = require("./../../data/ao3");
+
+const util = require("./../util");
+
 //
 // Locals
 //
-
-const ratings =
-{
-	"Not Rated": 0,
-	"General Audiences": 1,
-	"Teen And Up Audiences": 2,
-	"Mature": 3,
-	"Explicit": 4,
-}
-
-const archiveWarnings =
-{
-	"Creator Chose Not To Use Archive Warnings": 0,
-	"Graphic Depictions Of Violence": 1,
-	"Major Character Death": 2,
-	"No Archive Warnings Apply": 3,
-	"Rape/Non-Con": 4,
-	"Underage": 5,
-}
-
-const categories =
-{
-	"F/F": 0,
-	"F/M": 1,
-	"Gen": 2,
-	"M/M": 3,
-	"Multi": 4,
-	"Other": 5,
-}
 
 const getString = bent("https://archiveofourown.org/works/", "string", 200, { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.146 Safari/537.36" });
 
