@@ -186,14 +186,79 @@ async function route(context)
 			published: util.cleanAndParseInt(chapters[0]),
 			total: chapters[1] != "?" ? util.cleanAndParseInt(chapters[1]) : -1,
 		}
-	
-		response.work.stats.comments = util.getWorkStatInt($, "dd.comments");
 
+		response.work.stats.comments = util.getWorkStatInt($, "dd.comments");
+	
 		response.work.stats.kudos = util.getWorkStatInt($, "dd.kudos");
 	
 		response.work.stats.bookmarks = util.getWorkStatInt($, "dd.bookmarks");
 	
 		response.work.stats.hits = util.getWorkStatInt($, "dd.hits");
+	}
+
+	//
+	// Associations (if this work has any)
+	//
+
+	{
+		// People this work was gifted to
+		let giftees = [];
+		// TODO: scary, complicated
+
+		// Inspirations
+		let inspirations = [];
+		// TODO: scary, complicated
+
+		// Works inpisred by this one (only possible to get on the last chapter or when viewing the full work)
+		let childWorks = [];
+
+		let childWorkElements = $("#children > ul > li");
+
+		if(childWorkElements.length > 0)
+		{
+			childWorkElements.each(function(index, element)
+			{
+				let childWorkLink = $(this).children().first();
+
+				let childWork = {};
+
+				childWork.work = {};
+				childWork.work.id = childWorkLink.prop("href").split("/")[2];
+				childWork.work.title = childWorkLink.text();
+				childWork.work.url = childWorkLink.prop("href");
+
+				childWork.authors = [];
+
+				$(this).find("a[rel=\"author\"]").each(function(index, element)
+				{
+					let author = {};
+
+					author.name = $(this).text();
+					author.url = $(this).prop("href");
+
+					childWork.authors.push(author);
+				});
+
+				childWorks.push(childWork);
+			});
+		}
+
+		let hasGiftees = giftees.length > 0;
+		let hasInspirations = inspirations.length > 0;
+		let hasChildWorks = childWorks.length > 0;
+		if(hasGiftees || hasInspirations || hasChildWorks)
+		{
+			response.associations = {};
+
+			if(hasGiftees)
+				response.associations.giftees = giftees;
+
+			if(hasInspirations)
+				response.associations.inspirations = inspirations;
+
+			if(hasChildWorks)
+				response.associations.inspiredWorks = childWorks;
+		}
 	}
 
 	// 
