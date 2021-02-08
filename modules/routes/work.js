@@ -152,12 +152,12 @@ async function route(context)
 	{
 		response.work.stats = {};
 	
-		response.work.publication_date = $("dd.published", "dd.stats").text();
+		response.work.stats.publication_date = $("dd.published", "dd.stats").text();
 
 		let statusElement = $("dd.status", "dd.stats");
 
 		if(statusElement.length > 0)
-			response.work.update_date = statusElement.text();
+			response.work.stats.update_date = statusElement.text();
 	
 		response.work.stats.words = util.cleanAndParseInt($("dd.words", "dd.stats").text());
 	
