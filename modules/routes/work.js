@@ -262,13 +262,20 @@ async function route(context)
 
 			let chapterTitle = titleElement.contents().filter((i, element) => element.type == "text").text().trim().substr(2); // Partially taken from https://stackoverflow.com/a/23956052
 
-			let chapter = 
-			{
-				id: chapterId,
-				number: chapterNumber, 
-				title: chapterTitle,
-				url: chapterUrl,
-			};
+			let summaryElement = $(this).find(".chapter.preface.group > .summary.module > .userstuff");
+
+			let chapter = {};
+
+			chapter.id = chapterId;
+
+			chapter.number = chapterNumber;
+
+			chapter.title = chapterTitle;
+
+			if(summaryElement.length > 0)
+				chapter.summary = summaryElement.html().trim();
+
+			chapter.url = chapterUrl;
 
 			response.chapters.push(chapter);
 		});
