@@ -46,4 +46,17 @@ util.populateArrayFromListElement = function($, listArray, listElementSelector, 
 	});
 }
 
+/**
+ * Gets a work statistic as an integer.
+ * 
+ * @param {cheerio.Root} $ A cheerio Root instance.
+ * @param {String} elementSelector The selector for the stat element.
+ */
+util.getWorkStatInt = function($, elementSelector)
+{
+	let statElement = $(elementSelector, "dd.stats");
+
+	return statElement.length > 0 ? util.cleanAndParseInt(statElement.text()) : 0;
+}
+
 module.exports = util;

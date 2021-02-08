@@ -155,37 +155,13 @@ async function route(context)
 			total: chapters[1] != "?" ? util.cleanAndParseInt(chapters[1]) : -1,
 		}
 	
-		response.work.stats.comments = util.cleanAndParseInt($("dd.comments", "dd.stats").text());
-	
-		response.work.stats.kudos = util.cleanAndParseInt($("dd.kudos", "dd.stats").text());
-	
-		response.work.stats.bookmarks = util.cleanAndParseInt($("dd.bookmarks", "dd.stats").text());
-	
-		response.work.stats.hits = util.cleanAndParseInt($("dd.hits", "dd.stats").text());
-	}
+		response.work.stats.comments = util.getWorkStatInt($, "dd.comments");
 
-	//
-	// Work Metadata
-	//
-
-	// Title
-	{
-		response.work.title = $(".title.heading", "#workskin").text().trim();
-	}
-
-	// Authors
-	{
-		response.work.authors = [];
-
-		$("#workskin > .preface.group > h3.byline.heading > a").each(function(i, element)
-		{
-			let author = {};
+		response.work.stats.kudos = util.getWorkStatInt($, "dd.kudos");
 	
-			author.name = $(this).text();
-			author.url = $(this).prop("href");
+		response.work.stats.bookmarks = util.getWorkStatInt($, "dd.bookmarks");
 	
-			response.work.authors.push(author);
-		});
+		response.work.stats.hits = util.getWorkStatInt($, "dd.hits");
 	}
 
 	// 
