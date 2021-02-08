@@ -15,9 +15,6 @@ const util = require("./../util");
 
 const getString = bent("https://archiveofourown.org/works/", "string", 200, 
 { 
-	// Pretend we're Chrome
-	"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.146 Safari/537.36",
-
 	// Cookie required to skip the view adult content warning on AO3
 	"Cookie": "view_adult=true;",
 });
