@@ -135,19 +135,6 @@ async function route(context)
 		response.work.language = $("dd.language").text().trim();
 	}
 
-	// 
-	// Series (if the work is apart of one)
-	//
-	{
-		let seriesElement = $("dd.series");
-
-		console.log(seriesElement);
-
-		response.series = [];
-
-
-	}
-
 	// Stats
 	{
 		response.work.stats = {};
@@ -199,6 +186,52 @@ async function route(context)
 	
 			response.work.authors.push(author);
 		});
+	}
+
+	// 
+	// Series (if the work is apart of at least one)
+	//
+
+	{
+		let seriesElements = $("span.series", "dd.series");
+
+		if(seriesElements.length > 0)
+		{
+			response.series = [];
+
+			seriesElements.each(function(index, element)
+			{
+
+				let series = {};
+
+				let seriesLink = $(this).find("span.position").find("a");
+				series.id = parseInt(seriesLink.prop("href").split("/")[2]);
+				series.title = seriesLink.text();
+				series.url = seriesLink.prop("href");
+
+				let previousWorkLink = $(this).find("a.previous");
+				if(previousWorkLink.length > 0)
+				{
+					series.previous_work =
+					{
+						id: parseInt(previousWorkLink.prop("href").split("/")[2]),
+						url: previousWorkLink.prop("href"),
+					}
+				}
+
+				let nextWorkLink = $(this).find("a.next");
+				if(nextWorkLink.length > 0)
+				{
+					series.next_work =
+					{
+						id: parseInt(nextWorkLink.prop("href").split("/")[2]),
+						url: nextWorkLink.prop("href"),
+					}
+				}
+
+				response.series.push(series);
+			});
+		}
 	}
 
 	//
