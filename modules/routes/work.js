@@ -70,6 +70,38 @@ async function route(context)
 	response.work.url = "/works/" + work_id;
 
 	//
+	// Work Metadata
+	//
+
+	// Title
+	{
+		response.work.title = $(".title.heading", "#workskin").text().trim();
+	}
+
+	// Authors
+	{
+		response.work.authors = [];
+
+		$("#workskin > .preface.group > h3.byline.heading > a").each(function(i, element)
+		{
+			let author = {};
+	
+			author.name = $(this).text();
+			author.url = $(this).prop("href");
+	
+			response.work.authors.push(author);
+		});
+	}
+
+	// Summary
+	{
+		let summaryElement = $("#workskin > .preface.group > .summary.module > .userstuff");
+
+		if(summaryElement.length > 0)
+			response.work.summary = summaryElement.html().trim();
+	}
+
+	//
 	// Work Information Block
 	//
 
