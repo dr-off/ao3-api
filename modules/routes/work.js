@@ -13,7 +13,14 @@ const util = require("./../util");
 // Locals
 //
 
-const getString = bent("https://archiveofourown.org/works/", "string", 200, { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.146 Safari/537.36" });
+const getString = bent("https://archiveofourown.org/works/", "string", 200, 
+{ 
+	// Pretend we're Chrome
+	"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.146 Safari/537.36",
+
+	// Cookie required to skip the view adult content warning on AO3
+	"Cookie": "view_adult=true;",
+});
 
 //
 // Exports
@@ -128,9 +135,17 @@ async function route(context)
 		response.work.language = $("dd.language").text().trim();
 	}
 
+	// 
 	// Series (if the work is apart of one)
+	//
 	{
-		// TODO
+		let seriesElement = $("dd.series");
+
+		console.log(seriesElement);
+
+		response.series = [];
+
+
 	}
 
 	// Stats
