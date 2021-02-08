@@ -157,7 +157,7 @@ async function route(context)
 		let statusElement = $("dd.status", "dd.stats");
 
 		if(statusElement.length > 0)
-			response.work.stats.update_date = statusElement.text();
+			response.work.stats.last_update_date = statusElement.text();
 	
 		response.work.stats.words = util.cleanAndParseInt($("dd.words", "dd.stats").text());
 	
