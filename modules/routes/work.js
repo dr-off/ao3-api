@@ -31,14 +31,7 @@ async function route(context)
 	let work_id = context.params.work_id;
 	let chapter_id = context.params.chapter_id;
 
-	let requestUrl = "";
-
-	requestUrl += work_id;
-
-	if(chapter_id)
-		requestUrl += "/chapters/" + chapter_id;
-	else if(context.request.query.view_full_work)
-		requestUrl += "?view_full_work=true";
+	let requestUrl = work_id + "?view_full_work=true";
 
 	let html = await getString(requestUrl);
 
