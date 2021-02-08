@@ -14,7 +14,7 @@ const util = require("./../util");
 //
 
 const getString = bent("https://archiveofourown.org/works/", "string", 200, 
-{ 
+{
 	// Cookie required to skip the view adult content warning on AO3
 	"Cookie": "view_adult=true;",
 });
@@ -27,6 +27,11 @@ async function route(context)
 {
 	let work_id = context.params.work_id;
 	let chapter_id = context.params.chapter_id;
+
+	let options = {};
+	options.include_associations = context.request.query.include_associations != undefined ? context.request.query.include_associations == "true" : true;
+	options.include_series = context.request.query.include_series != undefined ? context.request.query.include_series == "true" : true;
+	options.include_chapters = context.request.query.include_chapters != undefined ? context.request.query.include_chapters == "true" : true;
 
 	let requestUrl = work_id + "?view_full_work=true";
 
@@ -190,6 +195,7 @@ async function route(context)
 	// Associations (if this work has any)
 	//
 
+	if(options.include_associations)
 	{
 		// People this work was gifted to
 		let giftees = [];
@@ -255,6 +261,7 @@ async function route(context)
 	// Series (if the work is apart of at least one)
 	//
 
+	if(options.include_series)
 	{
 		let seriesElements = $("span.series", "dd.series");
 
@@ -301,7 +308,7 @@ async function route(context)
 	// Chapter(s) Information
 	//
 
-	if(response.work.stats.chapters.total != 1)
+	if(options.include_chapters && response.work.stats.chapters.total != 1)
 	{
 		response.chapters = [];
 
