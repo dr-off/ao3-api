@@ -305,6 +305,22 @@ async function route(context)
 	}
 
 	//
+	// Collections
+	//
+
+	{
+		// TODO
+	}
+
+	//
+	// Kudos
+	//
+
+	{
+		// TODO
+	}
+
+	//
 	// Chapter(s) Information
 	//
 
