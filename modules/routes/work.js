@@ -37,20 +37,14 @@ async function route(context)
 	let $ = cheerio.load(html);
 
 	let response = {};
-
-	//
-	// Work
-	//
-
-	response.work = {};
 	
 	//
 	// Work Identifiers
 	//
 	
-	response.work.id = parseInt(work_id);
+	response.id = parseInt(work_id);
 
-	response.work.url = "/works/" + work_id;
+	response.url = "/works/" + work_id;
 
 	//
 	// Work Metadata
@@ -58,12 +52,12 @@ async function route(context)
 
 	// Title
 	{
-		response.work.title = $(".title.heading", "#workskin").text().trim();
+		response.title = $(".title.heading", "#workskin").text().trim();
 	}
 
 	// Authors
 	{
-		response.work.authors = [];
+		response.authors = [];
 
 		$("#workskin > .preface.group > h3.byline.heading > a").each(function(i, element)
 		{
@@ -72,7 +66,7 @@ async function route(context)
 			author.name = $(this).text();
 			author.url = $(this).prop("href");
 	
-			response.work.authors.push(author);
+			response.authors.push(author);
 		});
 	}
 
@@ -81,7 +75,7 @@ async function route(context)
 		let summaryElement = $("#workskin > .preface.group > .summary.module > .userstuff");
 
 		if(summaryElement.length > 0)
-			response.work.summary = summaryElement.html().trim();
+			response.summary = summaryElement.html().trim();
 	}
 
 	//
@@ -90,12 +84,12 @@ async function route(context)
 
 	// Rating
 	{
-		response.work.rating = undefined;
+		response.rating = undefined;
 
 		let element = $("dd.rating.tags > ul > li").first();
 		let text = element.text();
 
-		response.work.rating =
+		response.rating =
 		{
 			index: context.data.ao3.ratings[text],
 			title: text,
@@ -105,78 +99,78 @@ async function route(context)
 
 	// Archive Warnings
 	{
-		response.work.archiveWarnings = [];
+		response.archiveWarnings = [];
 	
-		util.populateArrayFromListElement($, response.work.archiveWarnings, "dd.warning.tags > ul > li", context.data.ao3.archiveWarnings);
+		util.populateArrayFromListElement($, response.archiveWarnings, "dd.warning.tags > ul > li", context.data.ao3.archiveWarnings);
 	}
 
 	// Categories
 	{
-		response.work.categories = [];
+		response.categories = [];
 
-		util.populateArrayFromListElement($, response.work.categories, "dd.category.tags > ul > li", context.data.ao3.categories);
+		util.populateArrayFromListElement($, response.categories, "dd.category.tags > ul > li", context.data.ao3.categories);
 	}
 
 	// Fandoms
 	{
-		response.work.fandoms = [];
+		response.fandoms = [];
 
-		util.populateArrayFromListElement($, response.work.fandoms, "dd.fandom.tags > ul > li");
+		util.populateArrayFromListElement($, response.fandoms, "dd.fandom.tags > ul > li");
 	}
 
 	// Relationships
 	{
-		response.work.relationships = [];
+		response.relationships = [];
 
-		util.populateArrayFromListElement($, response.work.relationships, "dd.relationship.tags > ul > li");
+		util.populateArrayFromListElement($, response.relationships, "dd.relationship.tags > ul > li");
 	}
 
 	// Characters
 	{
-		response.work.characters = [];
+		response.characters = [];
 
-		util.populateArrayFromListElement($, response.work.characters, "dd.character.tags > ul > li");
+		util.populateArrayFromListElement($, response.characters, "dd.character.tags > ul > li");
 	}
 
 	// Additional Tags
 	{
-		response.work.additionalTags = [];
+		response.additionalTags = [];
 
-		util.populateArrayFromListElement($, response.work.additionalTags, "dd.freeform.tags > ul > li");
+		util.populateArrayFromListElement($, response.additionalTags, "dd.freeform.tags > ul > li");
 	}
 	
 	// Language
 	{
-		response.work.language = $("dd.language").text().trim();
+		response.language = $("dd.language").text().trim();
 	}
 
 	// Stats
 	{
-		response.work.stats = {};
+		response.stats = {};
 	
-		response.work.stats.publication_date = $("dd.published", "dd.stats").text();
+		response.stats.publication_date = $("dd.published", "dd.stats").text();
 
 		let statusElement = $("dd.status", "dd.stats");
 
 		if(statusElement.length > 0)
-			response.work.stats.last_update_date = statusElement.text();
+			response.stats.last_update_date = statusElement.text();
 	
-		response.work.stats.words = util.cleanAndParseInt($("dd.words", "dd.stats").text());
+		response.stats.words = util.cleanAndParseInt($("dd.words", "dd.stats").text());
 	
 		let chapters = $("dd.chapters", "dd.stats").text().trim().split("/");
-		response.work.stats.chapters =
+		response.stats.chapters =
 		{
 			published: util.cleanAndParseInt(chapters[0]),
 			total: chapters[1] != "?" ? util.cleanAndParseInt(chapters[1]) : -1,
 		}
 
-		response.work.stats.comments = util.getWorkStatInt($, "dd.comments");
+		response.stats.comments = util.getWorkStatInt($, "dd.comments");
 	
-		response.work.stats.kudos = util.getWorkStatInt($, "dd.kudos");
+		response.stats.kudos = util.getWorkStatInt($, "dd.kudos");
 	
-		response.work.stats.bookmarks = util.getWorkStatInt($, "dd.bookmarks");
+		response.stats.bookmarks = util.getWorkStatInt($, "dd.bookmarks");
 	
-		response.work.stats.hits = util.getWorkStatInt($, "dd.hits");
+		response.stats.hits = util.getWorkStatInt($, "dd.hits");
 	}
 
 	//
@@ -312,7 +306,7 @@ async function route(context)
 	// Chapter(s) Information
 	//
 
-	if(options.include_chapters && response.work.stats.chapters.total != 1)
+	if(options.include_chapters && response.stats.chapters.total != 1)
 	{
 		response.chapters = [];
 
