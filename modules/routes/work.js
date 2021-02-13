@@ -5,8 +5,6 @@
 const bent = require("bent");
 const cheerio = require("cheerio");
 
-const { ratings, archiveWarnings, categories } = require("./../../data/ao3");
-
 const util = require("./../util");
 
 //
@@ -26,7 +24,6 @@ const getString = bent("https://archiveofourown.org/works/", "string", 200,
 async function route(context)
 {
 	let work_id = context.params.work_id;
-	let chapter_id = context.params.chapter_id;
 
 	let options = {};
 	options.include_associations = context.request.query.include_associations != undefined ? context.request.query.include_associations == "true" : true;
@@ -40,15 +37,6 @@ async function route(context)
 	let $ = cheerio.load(html);
 
 	let response = {};
-
-	//
-	// API Information
-	//
-
-	response.api =
-	{
-		version: "1.0",
-	};
 
 	//
 	// Work
@@ -109,7 +97,7 @@ async function route(context)
 
 		response.work.rating =
 		{
-			index: ratings[text],
+			index: context.data.ao3.ratings[text],
 			title: text,
 			url: element.children("a").prop("href"),
 		}
@@ -119,14 +107,14 @@ async function route(context)
 	{
 		response.work.archiveWarnings = [];
 	
-		util.populateArrayFromListElement($, response.work.archiveWarnings, "dd.warning.tags > ul > li", archiveWarnings);
+		util.populateArrayFromListElement($, response.work.archiveWarnings, "dd.warning.tags > ul > li", context.data.ao3.archiveWarnings);
 	}
 
 	// Categories
 	{
 		response.work.categories = [];
 
-		util.populateArrayFromListElement($, response.work.categories, "dd.category.tags > ul > li", categories);
+		util.populateArrayFromListElement($, response.work.categories, "dd.category.tags > ul > li", context.data.ao3.categories);
 	}
 
 	// Fandoms
