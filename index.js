@@ -6,6 +6,7 @@ const configuration = require("./configuration");
 
 const axios = require("axios").default;
 const chalk = require("chalk");
+const cheerio = require("cheerio");
 const koa = require("koa");
 const koaRouter = require("koa-router");
 
@@ -44,6 +45,8 @@ async function run()
 	app.use(async function(context, next)
 	{
 		context.axios = axiosInstance;
+
+		context.cheerio = cheerio;
 
 		context.data =
 		{

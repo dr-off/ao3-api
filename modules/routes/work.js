@@ -1,12 +1,4 @@
 //
-// Dependencies
-//
-
-const cheerio = require("cheerio");
-
-const util = require("./../util");
-
-//
 // Exports
 //
 
@@ -74,7 +66,7 @@ async function route(context)
 	// Load the Document with Cheerio
 	//
 
-	let $ = cheerio.load(html);
+	let $ = context.cheerio.load(html);
 	
 	//
 	// Work Identifiers
@@ -139,42 +131,42 @@ async function route(context)
 	{
 		response.archiveWarnings = [];
 	
-		util.populateArrayFromListElement($, response.archiveWarnings, "dd.warning.tags > ul > li", context.data.ao3.archiveWarnings);
+		context.util.populateArrayFromListElement($, response.archiveWarnings, "dd.warning.tags > ul > li", context.data.ao3.archiveWarnings);
 	}
 
 	// Categories
 	{
 		response.categories = [];
 
-		util.populateArrayFromListElement($, response.categories, "dd.category.tags > ul > li", context.data.ao3.categories);
+		context.util.populateArrayFromListElement($, response.categories, "dd.category.tags > ul > li", context.data.ao3.categories);
 	}
 
 	// Fandoms
 	{
 		response.fandoms = [];
 
-		util.populateArrayFromListElement($, response.fandoms, "dd.fandom.tags > ul > li");
+		context.util.populateArrayFromListElement($, response.fandoms, "dd.fandom.tags > ul > li");
 	}
 
 	// Relationships
 	{
 		response.relationships = [];
 
-		util.populateArrayFromListElement($, response.relationships, "dd.relationship.tags > ul > li");
+		context.util.populateArrayFromListElement($, response.relationships, "dd.relationship.tags > ul > li");
 	}
 
 	// Characters
 	{
 		response.characters = [];
 
-		util.populateArrayFromListElement($, response.characters, "dd.character.tags > ul > li");
+		context.util.populateArrayFromListElement($, response.characters, "dd.character.tags > ul > li");
 	}
 
 	// Additional Tags
 	{
 		response.additionalTags = [];
 
-		util.populateArrayFromListElement($, response.additionalTags, "dd.freeform.tags > ul > li");
+		context.util.populateArrayFromListElement($, response.additionalTags, "dd.freeform.tags > ul > li");
 	}
 	
 	// Language
@@ -193,22 +185,22 @@ async function route(context)
 		if(statusElement.length > 0)
 			response.stats.last_update_date = statusElement.text();
 	
-		response.stats.words = util.cleanAndParseInt($("dd.words", "dd.stats").text());
+		response.stats.words = context.util.cleanAndParseInt($("dd.words", "dd.stats").text());
 	
 		let chapters = $("dd.chapters", "dd.stats").text().trim().split("/");
 		response.stats.chapters =
 		{
-			published: util.cleanAndParseInt(chapters[0]),
-			total: chapters[1] != "?" ? util.cleanAndParseInt(chapters[1]) : -1,
+			published: context.util.cleanAndParseInt(chapters[0]),
+			total: chapters[1] != "?" ? context.util.cleanAndParseInt(chapters[1]) : -1,
 		}
 
-		response.stats.comments = util.getWorkStatInt($, "dd.comments");
+		response.stats.comments = context.util.getWorkStatInt($, "dd.comments");
 	
-		response.stats.kudos = util.getWorkStatInt($, "dd.kudos");
+		response.stats.kudos = context.util.getWorkStatInt($, "dd.kudos");
 	
-		response.stats.bookmarks = util.getWorkStatInt($, "dd.bookmarks");
+		response.stats.bookmarks = context.util.getWorkStatInt($, "dd.bookmarks");
 	
-		response.stats.hits = util.getWorkStatInt($, "dd.hits");
+		response.stats.hits = context.util.getWorkStatInt($, "dd.hits");
 	}
 
 	//
