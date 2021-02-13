@@ -2,20 +2,9 @@
 // Dependencies
 //
 
-const bent = require("bent");
 const cheerio = require("cheerio");
 
 const util = require("./../util");
-
-//
-// Locals
-//
-
-const getString = bent("https://archiveofourown.org/works/", "string", 200, 
-{
-	// Cookie required to skip the view adult content warning on AO3
-	"Cookie": "view_adult=true;",
-});
 
 //
 // Exports
@@ -23,20 +12,69 @@ const getString = bent("https://archiveofourown.org/works/", "string", 200,
 
 async function route(context)
 {
+	//
+	// Set Response Content Type
+	//
+
+	context.type = "application/json";
+
+	// 
+	// Initialise Response Object
+	//
+
+	let response = {};
+
+	// 
+	// Get Parameters
+	//
+
 	let work_id = context.params.work_id;
+
+	//
+	// Get Endpoint Options
+	//
 
 	let options = {};
 	options.include_associations = context.request.query.include_associations != undefined ? context.request.query.include_associations == "true" : true;
 	options.include_series = context.request.query.include_series != undefined ? context.request.query.include_series == "true" : true;
 	options.include_chapters = context.request.query.include_chapters != undefined ? context.request.query.include_chapters == "true" : true;
 
-	let requestUrl = work_id + "?view_full_work=true";
+	//
+	// Assemble Request URL
+	//
 
-	let html = await getString(requestUrl);
+	let requestUrl = "/works/" + work_id + "?view_full_work=true";
+
+	//
+	// Perform the Request (and respond with an error if it fails for some reason)
+	//
+
+	let rawResponse;
+	try
+	{
+		rawResponse = await context.axios.get(requestUrl);
+
+		if(rawResponse.request.path == "/users/login?restricted=true")
+			throw new Error("This work is only available to registered users of the Archive and, as a result, it is not available through this API");
+	} 
+	catch(error)
+	{
+		console.log(error);
+
+		response.error = error.message;
+
+		context.body = JSON.stringify(response);
+
+		return;
+	}
+
+	let html = rawResponse.data;
+
+	//
+	// Load the Document with Cheerio
+	//
 
 	let $ = cheerio.load(html);
-
-	let response = {};
 	
 	//
 	// Work Identifiers
@@ -341,7 +379,6 @@ async function route(context)
 		});
 	}
 
-	context.type = "application/json";
 	context.body = JSON.stringify(response);
 };
 
