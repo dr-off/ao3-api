@@ -87,8 +87,9 @@ async function route(context)
 		{
 			let author = {};
 	
-			author.name = $(this).text();
 			author.url = $(this).prop("href");
+			
+			author.name = $(this).text();
 	
 			response.authors.push(author);
 		});
