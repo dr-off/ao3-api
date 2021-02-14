@@ -116,8 +116,8 @@ async function route(context)
 		response.rating =
 		{
 			index: context.data.ao3.ratings[text],
-			title: text,
 			url: element.children("a").prop("href"),
+			title: text,
 		}
 	}
 
@@ -226,8 +226,9 @@ async function route(context)
 
 				childWork.work = {};
 				childWork.work.id = childWorkLink.prop("href").split("/")[2];
-				childWork.work.title = childWorkLink.text();
 				childWork.work.url = childWorkLink.prop("href");
+
+				childWork.work.title = childWorkLink.text();
 
 				childWork.authors = [];
 
@@ -282,8 +283,9 @@ async function route(context)
 
 				let seriesLink = $(this).find("span.position").find("a");
 				series.id = parseInt(seriesLink.prop("href").split("/")[2]);
-				series.title = seriesLink.text();
 				series.url = seriesLink.prop("href");
+
+				series.title = seriesLink.text();
 
 				let previousWorkLink = $(this).find("a.previous");
 				if(previousWorkLink.length > 0)
@@ -352,6 +354,8 @@ async function route(context)
 
 			chapter.id = chapterId;
 
+			chapter.url = chapterUrl;
+
 			chapter.number = chapterNumber;
 
 			chapter.title = chapterTitle;
@@ -359,11 +363,13 @@ async function route(context)
 			if(summaryElement.length > 0)
 				chapter.summary = summaryElement.html().trim();
 
-			chapter.url = chapterUrl;
-
 			response.chapters.push(chapter);
 		});
 	}
+
+	//
+	// Stringify Response
+	//
 
 	context.body = JSON.stringify(response);
 };
