@@ -39,8 +39,8 @@ util.populateArrayFromListElement = function($, listArray, listElementSelector, 
 		if(indexLookupObject != undefined)
 			entry.index = indexLookupObject[text];
 
-		entry.name = text;
 		entry.url = $(this).children("a").prop("href");
+		entry.title = text;
 
 		listArray.push(entry);
 	});
