@@ -4,12 +4,6 @@
 
 async function route(context)
 {
-	//
-	// Set Response Content Type
-	//
-
-	context.type = "application/json";
-
 	// 
 	// Initialise Response Object
 	//

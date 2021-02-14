@@ -6,7 +6,7 @@ async function route(context)
 {
 	let response = {};
 
-	response.api = context.data.api;
+	response.error = "Endpoint not implemented.";
 	
 	context.body = JSON.stringify(response);
 }

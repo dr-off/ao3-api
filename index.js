@@ -12,6 +12,8 @@ const koaRouter = require("koa-router");
 
 const util = require("./modules/util");
 
+const middlewareContentType = require("./modules/middleware/content-type");
+
 const routeWork = require("./modules/routes/work");
 
 //
@@ -63,10 +65,12 @@ async function run()
 	{
 		let mwRouter = koaRouter();
 
-		mwRouter.get("/version", require("./modules/routes/version"));
+		mwRouter.get("/version", 								middlewareContentType, require("./modules/routes/version"));
 
-		mwRouter.get("/works/:work_id/chapters/:chapter_id", routeWork);
-		mwRouter.get("/works/:work_id", routeWork);
+		mwRouter.get("/works/:work_id/chapters/:chapter_id", 	middlewareContentType, routeWork);
+		mwRouter.get("/works/:work_id", 						middlewareContentType, routeWork);
+
+		mwRouter.get("/series/:series_id", 						middlewareContentType, require("./modules/routes/series"));
 
 		app.use(mwRouter.routes());
 	}
