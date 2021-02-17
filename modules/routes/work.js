@@ -1,4 +1,10 @@
 //
+// Dependencies
+//
+
+const cheerio = require("cheerio");
+
+//
 // Exports
 //
 
@@ -60,7 +66,7 @@ async function route(context)
 	// Load the Document with Cheerio
 	//
 
-	let $ = context.cheerio.load(html);
+	let $ = cheerio.load(html);
 	
 	//
 	// Work Identifiers
@@ -88,7 +94,7 @@ async function route(context)
 			let author = {};
 	
 			author.url = $(this).prop("href");
-			
+
 			author.name = $(this).text();
 	
 			response.authors.push(author);
