@@ -13,7 +13,6 @@
   "license": "ISC",
   "dependencies": {
     "axios": "^0.21.1",
-    "bent": "^7.3.12",
     "chalk": "^4.1.0",
     "cheerio": "^1.0.0-rc.5",
     "koa": "^2.13.1",
