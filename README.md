@@ -4,3 +4,6 @@ This is a Node.js application that provides an API to easily retrieve data from 
 # Endpoints
 
 * [/works](docs/endpoints/works.md)
+
+# Note
+This API is not currently considered stable and the structure of responses may change wildly.
