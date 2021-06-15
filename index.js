@@ -24,11 +24,13 @@ const axiosInstance = axios.create(
 		baseURL: "https://archiveofourown.org/",
 		headers:
 		{
-			Cookie: "view_adult=true;",
+			"Cookie": "view_adult=true;",
+			"User-Agent": `AO3 API ${ configuration.version }`,
 		}
 	});
 
 axios.defaults.headers.common["Cookie"] = "view_adult=true;";
+axios.defaults.headers.common["User-Agent"] = `AO3 API ${ configuration.version }`;
 
 //
 // Exports
