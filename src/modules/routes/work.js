@@ -128,51 +128,62 @@ async function route(context)
 		}
 	}
 
-	// Archive Warnings
+	// Tags
 	{
-		response.archiveWarnings = [];
+		response.tags = {};
+
+		// Archive Warnings
+		{
+			response.tags.archiveWarnings = [];
+		
+			context.util.populateArrayFromListElement($, response.tags.archiveWarnings, "dd.warning.tags > ul > li", context.data.ao3.archiveWarnings);
+		}
 	
-		context.util.populateArrayFromListElement($, response.archiveWarnings, "dd.warning.tags > ul > li", context.data.ao3.archiveWarnings);
-	}
-
-	// Categories
-	{
-		response.categories = [];
-
-		context.util.populateArrayFromListElement($, response.categories, "dd.category.tags > ul > li", context.data.ao3.categories);
-	}
-
-	// Fandoms
-	{
-		response.fandoms = [];
-
-		context.util.populateArrayFromListElement($, response.fandoms, "dd.fandom.tags > ul > li");
-	}
-
-	// Relationships
-	{
-		response.relationships = [];
-
-		context.util.populateArrayFromListElement($, response.relationships, "dd.relationship.tags > ul > li");
-	}
-
-	// Characters
-	{
-		response.characters = [];
-
-		context.util.populateArrayFromListElement($, response.characters, "dd.character.tags > ul > li");
-	}
-
-	// Additional Tags
-	{
-		response.additionalTags = [];
-
-		context.util.populateArrayFromListElement($, response.additionalTags, "dd.freeform.tags > ul > li");
+		// Categories
+		{
+			response.tags.categories = [];
+	
+			context.util.populateArrayFromListElement($, response.tags.categories, "dd.category.tags > ul > li", context.data.ao3.categories);
+		}
+	
+		// Fandoms
+		{
+			response.tags.fandoms = [];
+	
+			context.util.populateArrayFromListElement($, response.tags.fandoms, "dd.fandom.tags > ul > li");
+		}
+	
+		// Relationships
+		{
+			response.tags.relationships = [];
+	
+			context.util.populateArrayFromListElement($, response.tags.relationships, "dd.relationship.tags > ul > li");
+		}
+	
+		// Characters
+		{
+			response.tags.characters = [];
+	
+			context.util.populateArrayFromListElement($, response.tags.characters, "dd.character.tags > ul > li");
+		}
+		
+		// Additional Tags
+		{
+			response.tags.freeforms = [];
+	
+			context.util.populateArrayFromListElement($, response.tags.freeforms, "dd.freeform.tags > ul > li");
+		}
 	}
 	
 	// Language
 	{
-		response.language = $("dd.language").text().trim();
+		let languageName = $("dd.language").text().trim();
+
+		response.language = 
+		{
+			id: context.data.ao3.languages[languageName],
+			name: languageName,
+		}
 	}
 
 	// Stats
