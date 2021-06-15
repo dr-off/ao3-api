@@ -76,6 +76,7 @@ async function run()
 
 	// Listen for requests
 	app.listen(configuration.port);
+	console.log(chalk.cyan(`[API] Listening on port ${ configuration.port }.`));
 }
 
 run()
